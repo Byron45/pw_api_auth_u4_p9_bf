@@ -26,7 +26,7 @@ public class AuthResource {
             @QueryParam("user") String user,
             @QueryParam("password") String password) {
 
-        //Buscar en la base de datos el usuario
+        // Buscar en la base de datos el usuario
         Usuario usuario = usuarioRepository.findByUsername(user);
 
         // Validar el usuario y password
@@ -34,10 +34,10 @@ public class AuthResource {
 
         if (ok) {
 
-            //Obtener el rol del usuario desde la base de datos
+            // Obtener el rol del usuario desde la base de datos
             String role = usuario.getRole();
 
-            //Donde se compara el password y usuario contra la base
+            // Donde se compara el password y usuario contra la base
             String issuer = "matricula-auth";
             long ttl = 3600;
 
@@ -54,6 +54,18 @@ public class AuthResource {
             return new TokenResponse(jwt, exp.getEpochSecond(), role);
         } else {
             return null;
+        }
+    }
+
+    @GET
+    @Path("/validate")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean validateToken(@QueryParam("token") String token) {
+        try {
+            Jwt.claims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
